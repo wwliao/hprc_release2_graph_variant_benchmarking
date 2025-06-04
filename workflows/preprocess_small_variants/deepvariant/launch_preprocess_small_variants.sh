@@ -13,6 +13,7 @@ module load Nextflow/24.04.4
 SAMPLE_SHEET="samplesheet.csv"
 REF_FASTA="/gpfs/gibbs/pi/ycgh/wl474/resources/reference_genomes/GRCh38_no_alt/GRCh38_no_alt.fa"
 REF_FAI="/gpfs/gibbs/pi/ycgh/wl474/resources/reference_genomes/GRCh38_no_alt/GRCh38_no_alt.fa.fai"
+REF_SDF="/gpfs/gibbs/pi/ycgh/wl474/resources/reference_genomes/GRCh38_no_alt/SDF"
 OUTDIR="results"
 
 nextflow run main.nf \
@@ -21,4 +22,5 @@ nextflow run main.nf \
     --sample_sheet ${SAMPLE_SHEET} \
     --ref_fasta ${REF_FASTA} \
     --ref_fai ${REF_FAI} \
+    --ref_sdf ${REF_SDF} \
     --outdir ${OUTDIR}
