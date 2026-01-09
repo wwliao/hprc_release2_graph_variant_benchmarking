@@ -14,9 +14,15 @@ process RESOLVE_SV_TO_SEQ {
 
     script:
     """
-    bcftools view -f 'PASS,.' -Ou ${query_vcf} | bcftools norm -m -any -Oz -o ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.biallelic.vcf.gz
-    python3 ${resolve_sv_to_seq_script} ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.biallelic.vcf.gz ${ref_fasta} ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.resolved.vcf
-    bcftools annotate -x INFO -Ou ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.resolved.vcf | bcftools sort --write-index=tbi -Oz -o ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.resolved.vcf.gz
+    bcftools view -f 'PASS,.' -Ou ${query_vcf} \
+        | bcftools norm -m -any -Oz -o ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.biallelic.vcf.gz
+
+    python3 ${resolve_sv_to_seq_script} \
+        ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.biallelic.vcf.gz \
+        ${ref_fasta} ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.resolved.vcf
+
+    bcftools annotate -x INFO -Ou ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.resolved.vcf \
+        | bcftools sort --write-index=tbi -Oz -o ${query_vcf.baseName.tokenize('.')[0..2].join('.')}.resolved.vcf.gz
     """
 }
 
@@ -57,15 +63,15 @@ process AARDVARK_MERGE {
 }
 
 process AARDVARK_COMPARE {
-    tag "${sample}: ${caller2}"
+    tag "${sample}: ${caller}"
 
     input:
-    tuple val(sample), path(query_vcf1), path(query_tbi1), val(caller2), path(query_vcf2), path(query_tbi2), val(min_gap)
+    tuple val(sample), path(truth_vcf), path(truth_tbi), val(caller), path(query_vcf), path(query_tbi), val(min_gap)
     path ref_fasta
     path regions_bed
 
     output:
-    tuple val(sample), val(caller2), path("${sample}.${regions_bed.baseName}.${caller2}.compared.vcf.gz"), path("${sample}.${regions_bed.baseName}.${caller2}.region_summary.tsv.gz")
+    tuple val(sample), val(caller), path("${sample}.${regions_bed.baseName}.${caller}.compared.vcf.gz"), path("${sample}.${regions_bed.baseName}.${caller}.region_summary.tsv.gz")
 
     script:
     """
@@ -73,8 +79,8 @@ process AARDVARK_COMPARE {
         --threads ${task.cpus} \
         --reference ${ref_fasta} \
         --regions ${regions_bed} \
-        --truth-vcf ${query_vcf1} \
-        --query-vcf ${query_vcf2} \
+        --truth-vcf ${truth_vcf} \
+        --query-vcf ${query_vcf} \
         --truth-sample ${sample} \
         --query-sample ${sample} \
         --min-variant-gap ${min_gap} \
@@ -82,9 +88,9 @@ process AARDVARK_COMPARE {
         --output-debug .
 
     mv truth.vcf.gz \
-        ${sample}.${regions_bed.baseName}.${caller2}.compared.vcf.gz
+        ${sample}.${regions_bed.baseName}.${caller}.compared.vcf.gz
     mv region_summary.tsv.gz \
-        ${sample}.${regions_bed.baseName}.${caller2}.region_summary.tsv.gz
+        ${sample}.${regions_bed.baseName}.${caller}.region_summary.tsv.gz
     """
 }
 
@@ -179,10 +185,10 @@ workflow {
     // Combine AARDVARK_MERGE.out with each other caller for the same sample
     AARDVARK_MERGE.out
         .combine(other_callers_ch, by: 0)  // Combine by sample (index 0)
-        .map { sample, vcf1, tbi1, caller2, vcf2, tbi2 ->
-            // Set min_gap based on caller2
-            def min_gap = (caller2 == 'DeepVariant') ? 50 : 1000
-            tuple(sample, vcf1, tbi1, caller2, vcf2, tbi2, min_gap) }
+        .map { sample, truth_vcf, truth_tbi, caller, query_vcf, query_tbi ->
+            // Set min_gap based on caller
+            def min_gap = (caller == 'DeepVariant') ? 50 : 1000
+            tuple(sample, truth_vcf, truth_tbi, caller, query_vcf, query_tbi, min_gap) }
         .set { other_paired_ch }
 
     AARDVARK_COMPARE(other_paired_ch, file(params.ref_fasta), file(params.regions_bed))
