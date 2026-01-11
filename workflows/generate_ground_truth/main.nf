@@ -71,7 +71,7 @@ process AARDVARK_COMPARE {
     path regions_bed
 
     output:
-    tuple val(sample), val(caller), path("${sample}.${regions_bed.baseName}.${caller}.compared.vcf.gz"), path("${sample}.${regions_bed.baseName}.${caller}.region_summary.tsv.gz")
+    tuple val(sample), path(truth_vcf), val(caller), path("${sample}.${regions_bed.baseName}.${caller}.compared.vcf.gz"), path("${sample}.${regions_bed.baseName}.${caller}.region_summary.tsv.gz")
 
     script:
     """
@@ -98,7 +98,7 @@ process ADD_SOURCES_FROM_BASEPAIR_METRICS {
     tag "${sample}: ${caller}"
     
     input:
-    tuple val(sample), val(caller), path(compared_vcf), path(region_summary_tsv)
+    tuple val(sample), path(truth_vcf), val(caller), path(compared_vcf), path(region_summary_tsv)
     path add_sources_script
     val threshold
 
@@ -110,6 +110,7 @@ process ADD_SOURCES_FROM_BASEPAIR_METRICS {
     """
     python3 ${add_sources_script} \
         --input ${compared_vcf} \
+        --truth ${truth_vcf} \
         --output ${compared_vcf.baseName.tokenize('.')[0..3].join('.')}.vcf.gz \
         --region-summary ${region_summary_tsv} \
         --sample ${sample} \
