@@ -18,7 +18,7 @@ To minimize bias introduced by representation differences, we use Aardvark, a re
 
 Together, these features allow for a more robust and representation-agnostic comparison.
 
-## Why create custom ground truth VCFs?
+## Why create joint ground truth VCFs?
 
 Existing ground truth datasets typically separate small variants and SVs, for example:
 
@@ -30,5 +30,5 @@ However, separating ground truths in this way introduces several issues:
 - Variant classification depends on representation: Whether a variant is labeled as a small variant or an SV often depends on how it is represented (e.g., a single large deletion vs. many small variants).
 - Inconsistent representations between truth and query: A large deletion in the truth set may appear as multiple small variants in a query callset, or vice versa, complicating fair benchmarking.
 
-To address these problems, we perform joint benchmarking without separating variants by type or size. As a result, we generate custom per-sample ground truth VCFs that contain both small variants and SVs, enabling benchmarking that is robust to differences in variant representation using Aardvark.
+As a result, we generate per-sample joint ground truth VCFs that contain both small variants and SVs, enabling benchmarking that is robust to differences in variant representation using Aardvark.
 
