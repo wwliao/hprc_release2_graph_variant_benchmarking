@@ -146,11 +146,11 @@ def uniquify_id(rid, seen):
 parser = argparse.ArgumentParser(
     description=(
         "Consolidate caller support information from multiple record-aligned, "
-        "biallelic VCFs produced by `aardvark merge`. For each variant, "
-        "INFO/SOURCES values from all input VCFs are combined into "
-        "INFO/CALLERS with INFO/NCALLERS indicating the number of supporting "
-        "callers. The script also assigns a unique ID to each record and "
-        "annotates SVTYPE and SVLEN for variants ≥50 bp."
+        "biallelic VCFs produced by `aardvark merge` and `aardvark compare`. "
+        "For each variant, INFO/SOURCES values from all input VCFs are "
+        "combined into INFO/CALLERS with INFO/NCALLERS indicating the number "
+        "of supporting callers. The script also assigns a unique ID to each "
+        "variant and annotates INFO/SVTYPE and INFO/SVLEN for variants ≥50 bp."
     )
 )
 parser.add_argument("-o", "--output", required=True, help="Output VCF. If the filename ends with .vcf.gz, a bgzip-compressed VCF and a tabix index (.tbi) will be created.")
