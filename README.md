@@ -52,5 +52,3 @@ To tune the *threshold* for balancing basepair-level recall and precision, we us
 
 ## How to compare graph variants against the created joint ground truth
 
-The raw VCFs produced from pangenome graphs using `vg deconstruct` contain all snarls, including both top-level and nested variants, resulting in overlapping variant sites. We filtered these VCFs using `vcfbub --max-level 0 --max-allele-length 10000` to retain `LV=0` sites while popping bubbles whose maximum allele length exceeds 10 kb, which is the maximum variant size supported by Aardvark. When a size filter is applied, vcfbub also retains the child sites of any popped bubble, even if they occur at higher snarl levels, effectively replacing oversized complex events with their nested variants.
-
