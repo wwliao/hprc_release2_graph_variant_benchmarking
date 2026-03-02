@@ -40,7 +40,7 @@ We used 14 variant callers in total. However, only three callers produce joint c
 
 
 
-We first convert VCFs from all 14 callers into sequence-resolved VCFs. Because we merge VCFs from two assembly-based callers (dipcall and PAV) with a HiFi-based caller (longcallD), we additionally unphase longcallD genotypes before merging. Although longcallD reports phased genotypes, the phasing is valid only within local phase blocks and is not guaranteed to be consistent across genomic regions. Since Aardvark clusters variants based on genomic distance rather than phase-block boundaries, retaining these phased genotypes could introduce incorrect haplotype structure across clusters. Therefore, longcallD genotypes are unphased prior to running `aardvark merge`.
+We first convert VCFs from all 14 callers into sequence-resolved VCFs. Because we merge VCFs from two assembly-based callers (dipcall and PAV) with a HiFi-based caller (longcallD), we additionally unphase longcallD genotypes before merging. Although longcallD reports phased genotypes, the phasing is valid only within local phase blocks and is not guaranteed to be consistent across genomic regions. Since Aardvark clusters variants based on genomic distance rather than phase-block boundaries, retaining these phased genotypes could introduce incorrect haplotype structure across clusters. Therefore, longcallD genotypes are unphased prior to running Aardvark.
 
 This unphasing step does not affect `aardvark merge`, which evaluates haplotype sequences within each cluster. However, it is important when the resulting backbone VCF is later treated as the truth callset for `aardvark compare`, as phased genotypes in the truth set would otherwise impose potentially invalid haplotype constraints on query callsets.
 
