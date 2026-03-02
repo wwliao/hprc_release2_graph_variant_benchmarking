@@ -60,10 +60,10 @@ parser = argparse.ArgumentParser(
         "Drive output by a truth VCF so all truth records are present. If a "
         "truth record also exists in the input VCF, read FORMAT/RI from the "
         "input record, look up BASEPAIR metrics for that region ID in "
-        "region_summary.tsv.gz, and set INFO/SOURCES to caller when both "
+        "region_summary.tsv.gz, and set INFO/CALLERS to caller when both "
         "recall and precision ≥ the given threshold. If the truth record is "
         "missing in the input VCF, write basic record info only and do not "
-        "set INFO/SOURCES."
+        "set INFO/CALLERS."
     )
 )
 parser.add_argument(
@@ -91,7 +91,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--caller", required=True,
-    help="Caller name to include in INFO/SOURCES when metrics pass the threshold."
+    help="Caller name to include in INFO/CALLERS when metrics pass the threshold."
 )
 parser.add_argument(
     "--threshold", required=True, type=float,
@@ -112,11 +112,11 @@ if args.sample not in input_vcf.header.samples:
     sys.exit(f"Error: sample {args.sample!r} not found in input VCF")
 input_vcf.close()
 
-# Ensure INFO/SOURCES exists in the output header
-if "SOURCES" not in header.info:
+# Ensure INFO/CALLERS exists in the output header
+if "CALLERS" not in header.info:
     header.add_line(
-        '##INFO=<ID=SOURCES,Number=.,Type=String,'
-        'Description="List of tools or technologies that called the same record">'
+        '##INFO=<ID=CALLERS,Number=.,Type=String,'
+        'Description="List of variant callers supporting this record">'
     )
 
 # Validate sample exists in truth VCF
@@ -143,7 +143,7 @@ for truth_rec in truth_vcf:
 
 
     if input_rec is not None:
-        # Only set INFO/SOURCES when input record exists and metrics pass
+        # Only set INFO/CALLERS when input record exists and metrics pass
         sample_data = input_rec.samples[args.sample]
 
         # Region ID from FORMAT/RI for the given sample
@@ -166,14 +166,14 @@ for truth_rec in truth_vcf:
             )
 
         if pass_metrics:
-            new.info["SOURCES"] = args.caller
+            new.info["CALLERS"] = args.caller
 
 
     # Preserve genotype and phasing for the target sample
     new.samples[args.sample]["GT"] = truth_rec.samples[args.sample].get("GT")
     new.samples[args.sample].phased = truth_rec.samples[args.sample].phased
 
-    # If missing in input, do nothing: no INFO/SOURCES set
+    # If missing in input, do nothing: no INFO/CALLERS set
     out.write(new)
 
 out.close()
