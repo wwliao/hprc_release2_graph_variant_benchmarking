@@ -1,12 +1,12 @@
 # Graph Variant Benchmarking for the HPRC Release 2
 
-This repository contains Nextflow workflows for graph variant benchmarking across 230 of 231 individuals from the Human Pangenome Reference Consortium (HPRC) Release 2. HG00272 was excluded due to a likely large-scale misassembly on chromosome X and was therefore not included in the HPRC Release 2 pangenome graph.
+This repository contains Nextflow workflows for graph variant benchmarking across 230 of 231 individuals from the Human Pangenome Reference Consortium Release 2 (HPRC R2). HG00272 was excluded due to a likely large-scale misassembly on chromosome X and was therefore not included in the HPRC R2 pangenome graph.
 
 The workflows in this repository support:
 
 - Construction of merged callsets using multiple variant callers  
 - Derivation of per-sample joint ground truth VCFs  
-- Benchmarking variants derived from the pangenome graph (*graph variants*)
+- Benchmarking variants derived from the pangenome graph (**graph variants**)
 
 ## Data Source
 
