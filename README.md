@@ -26,7 +26,7 @@ Let:
 $$ R: \text{reference sequence in a region} $$ 
 $$ T: \text{truth haplotype sequence} $$
 $$ Q: \text{query haplotype sequence} $$
-$$ d(A, B): \text{edit distance between sequences} A \text{and} B $$  
+$$ d(A, B): \text{edit distance between sequences } A \text{ and } B $$  
 
 These satisfy:
 
