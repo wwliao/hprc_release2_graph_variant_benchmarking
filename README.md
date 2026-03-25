@@ -30,24 +30,18 @@ To minimize bias introduced by representation differences, we use [Aardvark](htt
 
   These satisfy:
 
-  ```math
-  TP + FN = d(R, T)
-  TP + FP = d(R, Q)
-  FN + FP = d(T, Q)
-  ```
+  $$ TP + FN = d(R, T) $$
+  $$ TP + FP = d(R, Q) $$
+  $$ FN + FP = d(T, Q) $$
 
   Solving for $TP$:
 
-  ```math
-  TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2}
-  ```
+  $$ TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2} $$
 
   Basepair-level metrics are then defined as:
 
-  ```math
-  \mathrm{Recall} = \frac{TP}{d(R, T)}
-  \mathrm{Precision} = \frac{TP}{d(R, Q)}
-  ```
+  $$ \text{Recall} = \frac{TP}{d(R, T)} $$
+  $$ \text{Precision} = \frac{TP}{d(R, Q)} $$
 
 Together, these features allow for a more robust and representation-agnostic comparison.
 
