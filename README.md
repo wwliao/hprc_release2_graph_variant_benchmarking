@@ -21,24 +21,24 @@ To minimize bias introduced by representation differences, we use [Aardvark](htt
 
 **Basepair-level metrics**: In addition to variant-level metrics, Aardvark provides *basepair-level recall and precision* based on haplotype sequence comparisons.
 
-  Let:
+Let:
   
-  $R$: reference sequence in a region  
-  $T$: truth haplotype sequence  
-  $Q$: query haplotype sequence  
-  $d(A, B)$: edit distance between sequences $A$ and $B$  
+$$ R: \text{reference sequence in a region} $$ 
+$$ T: \text{truth haplotype sequence} $$
+$$ Q: \text{query haplotype sequence} $$
+$$ d(A, B): \text{edit distance between sequences} A \text{and} B $$  
 
-  These satisfy:
+These satisfy:
 
 $$ TP + FN = d(R, T) $$
 $$ TP + FP = d(R, Q) $$
 $$ FN + FP = d(T, Q) $$
 
-  Solving for $TP$:
+Solving for $TP$:
 
 $$ TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2} $$
 
-  Basepair-level metrics are then defined as:
+Basepair-level metrics are then defined as:
 
 $$ \text{Recall} = \frac{TP}{d(R, T)} $$
 $$ \text{Precision} = \frac{TP}{d(R, Q)} $$
