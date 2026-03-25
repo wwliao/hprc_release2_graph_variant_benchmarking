@@ -17,30 +17,46 @@ Benchmarking variants is challenging because variant representation differs subs
 
 To minimize bias introduced by representation differences, we use [Aardvark](https://github.com/PacificBiosciences/aardvark), a recently developed benchmarking tool with the following advantages:
 
-- Haplotype-based comparison: Aardvark reconstructs haplotype sequences by *jointly* considering small variants and structural variants (SVs), instead of comparing variants record by record.
+- **Haplotype-based comparison**: Aardvark reconstructs haplotype sequences by *jointly* considering small variants and structural variants (SVs), instead of comparing variants record by record.
+
 - **Basepair-level metrics**: In addition to variant-level metrics, Aardvark provides *basepair-level recall and precision* based on haplotype sequence comparisons.
 
-	Let:
+  Let:
+  
+  - $R$: reference sequence in a region  
+  - $T$: truth haplotype sequence  
+  - $Q$: query haplotype sequence  
+  - $d(A, B)$: edit distance between sequences $A$ and $B$  
 
-	    R: reference sequence in a region  
-	    T: truth haplotype sequence  
-	    Q: query haplotype sequence  
-	    d(A, B): edit distance between sequences A and B  
+  These satisfy:
 
-	These satisfy:
+  $$
+  TP + FN = d(R, T)
+  $$
 
-	    TP + FN = d(R, T)  
-	    TP + FP = d(R, Q)  
-	    FN + FP = d(T, Q)  
+  $$
+  TP + FP = d(R, Q)
+  $$
 
-	Solving for TP:
+  $$
+  FN + FP = d(T, Q)
+  $$
 
-	    TP = (d(R, T) + d(R, Q) - d(T, Q)) / 2  
+  Solving for $TP$:
 
-	Basepair-level metrics are then defined as:
+  $$
+  TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2}
+  $$
 
-	    Recall = TP / d(R, T)
-	    Precision = TP / d(R, Q)
+  Basepair-level metrics are then defined as:
+
+  $$
+  \text{Recall} = \frac{TP}{d(R, T)}
+  $$
+
+  $$
+  \text{Precision} = \frac{TP}{d(R, Q)}
+  $$
 
 Together, these features allow for a more robust and representation-agnostic comparison.
 
