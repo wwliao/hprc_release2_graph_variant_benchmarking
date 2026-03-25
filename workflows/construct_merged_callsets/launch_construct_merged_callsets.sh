@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=launch_generate_ground_truth
-#SBATCH --output=launch_generate_ground_truth-%j.out
+#SBATCH --job-name=launch_construct_merged_callsets
+#SBATCH --output=launch_construct_merged_callsets-%j.out
 #SBATCH --partition=pi_hall
 #SBATCH --constraint=nogpu
 #SBATCH --cpus-per-task=2
