@@ -4,23 +4,28 @@ This repository contains Nextflow workflows for graph variant benchmarking acros
 
 The workflows in this repository support:
 
-- Per-sample ground truth generation using multiple variant callers
-- Benchmarking variants derived from the pangenome graph, referred to as *graph variants* below
+- Construction of merged callsets using multiple variant callers  
+- Derivation of per-sample joint ground truth VCFs  
+- Benchmarking variants derived from the pangenome graph (*graph variants*)
+
+## Data Source
+
+Merged callsets used in this repository are provided in the [variant calling repository](https://github.com/wwliao/hprc_release2_variant_calling), with an index available at the [merged callsets index](https://github.com/wwliao/hprc_release2_variant_calling/blob/main/index_files/merged_callsets.index.csv). These callsets integrate results from multiple variant callers and form the basis for deriving joint ground truth VCFs and benchmarking graph variants.
 
 ## Why benchmark with Aardvark?
 
 Benchmarking variants is challenging because variant representation differs substantially across methods and tools. This problem is even more severe for graph variants, whose representations can be very different from those produced by traditional linear-reference-based callers.
 
-To minimize bias introduced by representation differences, we use Aardvark, a recently developed benchmarking tool with the following advantages:
+To minimize bias introduced by representation differences, we use [Aardvark](https://github.com/PacificBiosciences/aardvark), a recently developed benchmarking tool with the following advantages:
 
 - Haplotype-based comparison: Aardvark reconstructs haplotype sequences by *jointly* considering small variants and structural variants (SVs), instead of comparing variants record by record.
 - Basepair-level metrics: In addition to variant-level metrics, Aardvark provides *basepair-level recall and precision*, which are particularly informative for benchmarking SVs.
 
 Together, these features allow for a more robust and representation-agnostic comparison.
 
-## Why create joint ground truth VCFs?
+## Why create joint ground truth callsets?
 
-Existing ground truth datasets typically separate small variants and SVs, for example:
+Existing ground truth callsets typically separate small variants and SVs, for example:
 
 - Small variant truth sets derived from DeepVariant
 - SV truth sets derived from PAV, supported by at least one additional SV caller
@@ -30,15 +35,11 @@ However, separating ground truths in this way introduces several issues:
 - Variant classification depends on representation: Whether a variant is labeled as a small variant or an SV often depends on how it is represented (e.g., a single large deletion vs. many small variants).
 - Inconsistent representations between truth and query: A large deletion in the truth set may appear as multiple small variants in a query callset, or vice versa, complicating fair benchmarking.
 
-As a result, we generate per-sample joint ground truth VCFs that contain both small variants and SVs, enabling consistent benchmarking despite differences in variant representation using Aardvark.
+As a result, we generate per-sample joint ground truth callsets that contain both small variants and SVs, enabling consistent benchmarking despite differences in variant representation using Aardvark.
 
-## How are the joint ground truth VCFs created?
+## How are merged callsets constructed?
 
 We used 14 variant callers in total. However, only three callers produce joint callsets that include both small variants and SVs: two assembly-based callers (dipcall and PAV) and one HiFi-based caller (longcallD). These three callers are therefore used to construct the *backbone* of the joint ground truth VCFs, while the remaining 11 callers are incorporated later as additional supporting evidence. In addition to generating joint callsets, these three callers provide base-level accurate variant representations. In contrast, many SV callers (e.g. SVIM-asm) merge similar heterozygous SVs into homozygous events, which can reduce base-level accuracy and complicate sequence-based comparisons.
-
-
-
-
 
 We first convert VCFs from all 14 callers into sequence-resolved VCFs. Because we merge VCFs from two assembly-based callers (dipcall and PAV) with a HiFi-based caller (longcallD), we additionally unphase longcallD genotypes before merging. Although longcallD reports phased genotypes, the phasing is valid only within local phase blocks and is not guaranteed to be consistent across genomic regions. Since Aardvark clusters variants based on genomic distance rather than phase-block boundaries, retaining these phased genotypes could introduce incorrect haplotype structure across clusters. Therefore, longcallD genotypes are unphased prior to running Aardvark.
 
