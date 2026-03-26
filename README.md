@@ -20,11 +20,9 @@ Instead of comparing variants record by record, Aardvark reconstructs haplotype 
 Let $R$ denote the reference sequence in a region, $T$ the truth haplotype sequence, and $Q$ the query haplotype sequence. Let $d(A, B)$ denote the edit distance between sequences $A$ and $B$. Under this formulation, the relationships between true positives (TP), false negatives (FN), and false positives (FP) can be expressed as:
 
 $$
-\begin{aligned}
-TP + FN &= d(R, T) \
-TP + FP &= d(R, Q) \
+TP + FN &= d(R, T)
+TP + FP &= d(R, Q)
 FN + FP &= d(T, Q)
-\end{aligned}
 $$
 
 Solving for $TP$ gives:
@@ -36,7 +34,7 @@ $$
 We then define basepair-level recall and precision as:
 
 $$
-\text{Recall} = \frac{TP}{d(R, T)}, \quad
+\text{Recall} = \frac{TP}{d(R, T)}
 \text{Precision} = \frac{TP}{d(R, Q)}
 $$
 
