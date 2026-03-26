@@ -89,7 +89,7 @@ For SV callers, we use a threshold of 0.5. Before comparison, we combine SVs (�
 
 ### Final callset construction
 
-Finally, we consolidate caller support information across all outputs from `aardvark merge` and `aardvark compare`. For each variant, the `INFO/SOURCES` values are merged into a single `INFO/CALLERS` field listing supporting callers, and an `INFO/NCALLERS` field indicating the number of supporting callers. We also assign a unique variant ID and annotate `INFO/SVTYPE` and `INFO/SVLEN` for variants ≥ 50 bp.
+Finally, we consolidate caller support information across all outputs from `aardvark merge` and `aardvark compare`. For each variant, the `INFO/SOURCES` and `INFO/CALLERS` values are merged into a single `INFO/CALLERS` field listing supporting callers, and an `INFO/NCALLERS` field indicating the number of supporting callers. We also assign a unique variant ID and annotate `INFO/SVTYPE` and `INFO/SVLEN` for variants ≥ 50 bp.
 
 ## Graph Variant Benchmarking
 
