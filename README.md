@@ -27,7 +27,7 @@ Solving for $TP$ gives:
 
 $$ TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2} $$
 
-We then define basepair-level recall and precision as:
+Basepair-level recall and precision are defined as:
 
 $$ \text{Recall} = \frac{TP}{d(R, T)} $$
 $$ \text{Precision} = \frac{TP}{d(R, Q)} $$
