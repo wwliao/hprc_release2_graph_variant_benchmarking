@@ -13,37 +13,34 @@ Merged callsets used in this repository are provided in the [variant calling rep
 
 ## Why benchmark with Aardvark?
 
-Benchmarking variants is challenging because variant representation differs substantially across methods and tools. This problem is even more severe for graph variants, whose representations can be very different from those produced by traditional linear-reference-based callers.
+Benchmarking variants is challenging because variant representations differ substantially across methods and tools. This issue is particularly pronounced for graph variants, whose representations can deviate significantly from those produced by linear-reference-based callers. To minimize bias introduced by representation differences, we use [Aardvark](https://github.com/PacificBiosciences/aardvark), which performs comparisons at the haplotype sequence level.
 
-To minimize bias introduced by representation differences, we use [Aardvark](https://github.com/PacificBiosciences/aardvark), a recently developed benchmarking tool with the following advantages:
+Instead of comparing variants record by record, Aardvark reconstructs haplotype sequences within local regions by jointly considering small variants and structural variants (SVs). This enables direct comparison of the underlying sequences, making the evaluation robust to differences in variant representation.
 
-**Haplotype-based comparison**: Aardvark reconstructs haplotype sequences by *jointly* considering small variants and structural variants (SVs), instead of comparing variants record by record.
+Let $R$ denote the reference sequence in a region, $T$ the truth haplotype sequence, and $Q$ the query haplotype sequence. Let $d(A, B)$ denote the edit distance between sequences $A$ and $B$. Under this formulation, the relationships between true positives (TP), false negatives (FN), and false positives (FP) can be expressed as:
 
-**Basepair-level metrics**: In addition to variant-level metrics, Aardvark provides *basepair-level recall and precision* based on haplotype sequence comparisons.
+$$
+\begin{aligned}
+TP + FN &= d(R, T) \
+TP + FP &= d(R, Q) \
+FN + FP &= d(T, Q)
+\end{aligned}
+$$
 
-Let:
-  
-$$ R: \text{reference sequence in a region} $$ 
-$$ T: \text{truth haplotype sequence} $$
-$$ Q: \text{query haplotype sequence} $$
-$$ d(A, B): \text{edit distance between sequences } A \text{ and } B $$  
+Solving for $TP$ gives:
 
-These satisfy:
+$$
+TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2}
+$$
 
-$$ TP + FN = d(R, T) $$
-$$ TP + FP = d(R, Q) $$
-$$ FN + FP = d(T, Q) $$
+We then define basepair-level recall and precision as:
 
-Solving for $TP$:
+$$
+\text{Recall} = \frac{TP}{d(R, T)}, \quad
+\text{Precision} = \frac{TP}{d(R, Q)}
+$$
 
-$$ TP = \frac{d(R, T) + d(R, Q) - d(T, Q)}{2} $$
-
-Basepair-level metrics are then defined as:
-
-$$ \text{Recall} = \frac{TP}{d(R, T)} $$
-$$ \text{Precision} = \frac{TP}{d(R, Q)} $$
-
-Together, these features allow for a more robust and representation-agnostic comparison.
+By defining accuracy in terms of sequence-level differences rather than variant-level matches, this framework provides a representation-agnostic evaluation of variant calls.
 
 ## Why create joint ground truth callsets?
 
