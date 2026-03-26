@@ -5,7 +5,7 @@ This repository contains Nextflow workflows for graph variant benchmarking acros
 The workflows in this repository support:
 
 - Construction of merged callsets using multiple variant callers 
-- Derivation of per-sample joint ground truth callsets and benchmarking of variants derived from the pangenome graph (**graph variants**)
+- Derivation of per-sample joint ground truth callsets and benchmarking of variants derived from the pangenome graph (hereafter referred to as *graph variants*)
 
 ## Data Source
 
