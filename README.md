@@ -17,8 +17,6 @@ Variant comparison is challenging because different methods often produce substa
 
 Aardvark operates at the haplotype sequence level by reconstructing local haplotypes through the joint consideration of small variants and structural variants (SVs). This enables direct comparison of the underlying sequences rather than relying on direct matching of VCF records, making the comparison robust to representation differences.
 
-In this work, we apply Aardvark in two contexts. First, during callset merging, we use haplotype sequence comparisons to identify consistent variants across callers and construct a joint ground truth. Second, during benchmarking of graph variants, we use Aardvark to compare query and truth callsets through haplotype sequence reconstruction rather than direct matching of VCF records, enabling consistent evaluation despite differences in variant representation. Notably, basepair-level metrics define agreement during merging, whereas benchmarking is summarized using variant-level metrics derived from these haplotype sequence comparisons.
-
 Formally, let $R$ denote the reference sequence in a region, $T$ the truth haplotype sequence, and $Q$ the query haplotype sequence. Let $d(A, B)$ denote the edit distance between sequences $A$ and $B$. Under this formulation, the relationships between true positives (TP), false negatives (FN), and false positives (FP) can be expressed as:
 
 $$ TP + FN = d(R, T) $$
@@ -35,6 +33,8 @@ $$ \text{Recall} = \frac{TP}{d(R, T)} $$
 $$ \text{Precision} = \frac{TP}{d(R, Q)} $$
 
 In addition to basepair-level metrics, Aardvark derives variant-level metrics by mapping haplotype sequence agreement back to individual variants. Specifically, it identifies the maximal set of alleles that can be incorporated into the reference sequence such that the resulting truth and query haplotypes are identical at the basepair level. Variants contributing to this consistent haplotype reconstruction are labeled as TP, while the remaining variants are assigned as FN or FP depending on their source. Importantly, variant representations do not need to match, as long as the resulting haplotype sequences are identical.
+
+In this work, we apply Aardvark in two contexts. First, during callset merging, we use haplotype sequence comparisons to identify consistent variants across callers and construct a joint ground truth. Second, during benchmarking of graph variants, we use Aardvark to compare query and truth callsets through haplotype sequence reconstruction rather than direct matching of VCF records, enabling consistent evaluation despite differences in variant representation. Notably, basepair-level metrics define agreement during merging, whereas benchmarking is summarized using variant-level metrics derived from these haplotype sequence comparisons.
 
 ## Why create joint ground truth callsets?
 
