@@ -47,19 +47,17 @@ However, separating variants in this way introduces several issues. First, varia
 
 To address this, we construct per-sample merged callsets that include both small variants and SVs, enabling consistent comparison at the haplotype sequence level using Aardvark.
 
-### Backbone callset construction
-
-We used 14 variant callers in total. Among them, three callers generate joint callsets containing both small variants and SVs: two assembly-based callers (dipcall and PAV) and one HiFi-based caller (longcallD). These three callers form the backbone of the merged callsets, while all the 14 callers are incorporated later as supporting evidence.
-
-In addition to producing joint callsets, these backbone callers provide base-level accurate variant representations. In contrast, many SV callers (e.g. SVIM-asm) merge similar heterozygous SVs into homozygous events, reducing base-level accuracy and complicating sequence-based comparisons.
-
 ### Preprocessing and haplotype consistency
 
 We first convert VCFs from all 14 callers into sequence-resolved form. Because the merged callset integrates VCFs from assembly-based callers (dipcall and PAV) and a HiFi-based caller (longcallD), we unphase longcallD genotypes prior to merging. Although longcallD reports phased genotypes, the phasing is valid only within local phase blocks and may not be consistent across genomic regions. Since Aardvark clusters variants based on genomic distance rather than phase-block boundaries, retaining these phased genotypes could introduce incorrect haplotype structure across clusters.
 
 This unphasing step does not affect `aardvark merge`, which evaluates haplotype sequences within each cluster. However, it is important when the resulting backbone callset is later treated as the truth callset for `aardvark compare`, where phased genotypes could otherwise impose incorrect haplotype constraints on query callsets.
 
-### Merging strategy
+### Backbone callset construction
+
+We used 14 variant callers in total. Among them, three callers generate joint callsets containing both small variants and SVs: two assembly-based callers (dipcall and PAV) and one HiFi-based caller (longcallD). These three callers form the backbone of the merged callsets, while all 14 callers are incorporated later as supporting evidence.
+
+In addition to producing joint callsets, these backbone callers provide base-level accurate variant representations. In contrast, many SV callers (e.g. SVIM-asm) merge similar heterozygous SVs into homozygous events, reducing base-level accuracy and complicating sequence-based comparisons.
 
 We merged the sequence-resolved VCFs from the three backbone callers using `aardvark merge`. Aardvark groups nearby variants into clusters based on genomic distance, reconstructs haplotype sequences within each cluster, and compares haplotypes across callers.
 
@@ -79,22 +77,19 @@ To incorporate evidence from all callers, we treat each of the 14 sequence-resol
 
 A caller is considered to support a cluster if both recall and precision meet a specified threshold.
 
-
-### Thresholds
-
 Thresholds are chosen based on caller type:
 
 - Joint callers (dipcall, PAV, longcallD): 0.9
 - SV callers (cuteSV-asm, SVIM-asm, cuteSV, DeBreak, DELLY, pbsv, sawfish, Sniffles2, SVDSS, SVIM): 0.5
 - Small variant caller (DeepVariant): 1.0
 
-Unlike `aardvark merge`, exact haplotype matches are not required. For SV callers, we combine SVs (≥ 50 bp) with small variants (< 50 bp) from DeepVariant prior to comparison to reduce mismtaches caused missing small variants. Because many SV callers merge heterozygous SVs into homozygous events, a threshold of 0.5 provides a more appropriate criterion for support.
+Unlike `aardvark merge`, exact haplotype matches are not required. For SV callers, we combine SVs (≥ 50 bp) with small variants (< 50 bp) from DeepVariant prior to comparison to reduce mismatches caused by missing small variants. Because many SV callers merge heterozygous SVs into homozygous events, a threshold of 0.5 provides a more appropriate criterion for support.
 
 For DeepVariant, we require exact matches (recall = precision = 1.0), due to the small size and precise representation of variants. To reduce the impact of missing SVs, we adjust the clustering distance from 1,000 bp to 50 bp when running `aardvark compare`, minimizing spurious mismatches between small variants and nearby SVs.
 
 ### Final callset construction
 
-Finally, we consolidate caller support information across all outputs from `aardvark merge` and `aardvark compare`. For each variant, the `INFO/SOURCES` values are merged into a single `INFO/CALLERS` field listing supporting callers, and an `INFO/NCALLERS` field indicating the number of supporting callers. We also assign a unique variant IDs and annotate `INFO/SVTYPE` and `INFO/SVLEN` for variants ≥ 50 bp.
+Finally, we consolidate caller support information across all outputs from `aardvark merge` and `aardvark compare`. For each variant, the `INFO/SOURCES` values are merged into a single `INFO/CALLERS` field listing supporting callers, and an `INFO/NCALLERS` field indicating the number of supporting callers. We also assign a unique variant ID and annotate `INFO/SVTYPE` and `INFO/SVLEN` for variants ≥ 50 bp.
 
 ## How to compare graph variants against the created joint ground truth
 
