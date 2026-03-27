@@ -9,7 +9,7 @@ The workflows in this repository support:
 
 ## Data Source
 
-Merged callsets used in this repository are provided in the [variant calling repository](https://github.com/wwliao/hprc_release2_variant_calling), with an index available at the [merged callsets index](https://github.com/wwliao/hprc_release2_variant_calling/blob/main/index_files/merged_callsets.index.csv). These callsets integrate results from multiple variant callers and form the basis for deriving joint ground truth callsets and benchmarking graph variants.
+Merged callsets used in this repository are provided in the [variant calling repository](https://github.com/wwliao/hprc_release2_variant_calling), with download paths listed in [merged_callsets.index.csv](https://github.com/wwliao/hprc_release2_variant_calling/blob/main/index_files/merged_callsets.index.csv). An additional index file, [variant_callsets.index.csv](https://github.com/wwliao/hprc_release2_variant_calling/blob/main/index_files/variant_callsets.index.csv), provides download paths for related resources such as dipcall BED files.
 
 ## Aardvark for Variant Comparison
 
@@ -46,6 +46,8 @@ Existing merged callsets typically separate small variants and SVs, for example:
 However, separating variants in this way introduces several issues. First, variant classification depends on representation: a single large deletion may be represented either as one SV or as multiple small variants. Second, representations may differ between callsets: a large deletion in one callset may appear as multiple small variants in another. These inconsistencies complicate downstream comparison and benchmarking.
 
 To address this, we construct per-sample merged callsets that include both small variants and SVs, enabling consistent comparison at the haplotype sequence level using Aardvark.
+
+All steps (including merged callset construction and graph variant benchmarking) are restricted to confident genomic regions defined by the dipcall BED file for each sample. The corresponding files are listed in the Data Source section.
 
 ### Preprocessing and haplotype consistency
 
