@@ -95,10 +95,10 @@ Finally, we consolidate caller support information across all outputs from `aard
 
 ## Graph Variant Benchmarking
 
-For each sample, we derive a joint ground truth callset from the merged callset by selecting variants supported by at least two callers (i.e., `INFO/NCALLERS ≥ 2`). This filtering step retains variants with consistent support across methods and serves as the truth callset for benchmarking.
+For each sample, we derive a joint ground truth callset from the merged callset by selecting variants supported by at least two callers (i.e., `INFO/NCALLERS` ≥ 2). This filtering step retains variants with consistent support across methods and serves as the truth callset for benchmarking.
 
-Prior to benchmarking, graph variants are preprocessed using a modified version of the [prepare-vcf-MC workflow](https://github.com/eblerjana/genotyping-pipelines/tree/main/prepare-vcf-MC) to decompose bubbles based on allele traversals, producing a representation suitable for comparison.
+Prior to benchmarking, graph variants are preprocessed using a [modified version of the decomposition workflow](https://github.com/wwliao/genotyping-pipelines/tree/main/prepare-vcf-MC). This modified workflow disables allele filtering and supports GRCh38-based Minigraph-Cactus graphs. It decomposes bubbles based on allele traversals to produce a biallelic representation. In addition, `INFO/SVTYPE` and `INFO/SVLEN` are added by a [custom annotation script](https://github.com/wwliao/hprc_release2_graph_variant_benchmarking/blob/main/workflows/benchmark_graph_variants/add_svtype_svlen.py) to make the VCF output suitable for comparison.
 
 Graph variants are then compared against the joint ground truth callset using `aardvark compare`. Comparisons are restricted to confident genomic regions defined by the dipcall BED file for each sample.
 
-In addition, GIAB stratification v3.6 BED files are applied to evaluate performance across different genomic contexts, enabling more detailed assessment of variant calling performance in regions such as segmental duplication and tandem repeat regions.
+[GIAB stratification v3.6 BED files](https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/genome-stratifications/v3.6) are also applied to evaluate performance across different genomic contexts, enabling more detailed assessment of variant calling performance in regions such as segmental duplications and tandem repeats.
