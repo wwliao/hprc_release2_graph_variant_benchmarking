@@ -1,6 +1,6 @@
 # Graph Variant Benchmarking for the HPRC Release 2
 
-This repository contains Nextflow workflows for graph variant benchmarking across 230 of 231 individuals from the Human Pangenome Reference Consortium Release 2 (HPRC R2). HG00272 was excluded due to a likely large-scale misassembly on chromosome X and was therefore not included in the HPRC R2 pangenome graph.
+This repository contains Nextflow workflows for graph variant benchmarking across 230 of 231 individuals from the Human Pangenome Reference Consortium Release 2 (HPRC2). HG00272 was excluded due to a likely large-scale misassembly on chromosome X and was therefore not included in the HPRC2 pangenome graph.
 
 The workflows in this repository support:
 
@@ -51,13 +51,13 @@ All steps (including merged callset construction and graph variant benchmarking)
 
 ### Preprocessing and haplotype consistency
 
-We first convert VCFs from all 14 callers into sequence-resolved form. Because the merged callset integrates VCFs from assembly-based callers (dipcall and PAV) and a HiFi-based caller (longcallD), we unphase longcallD genotypes prior to merging. Although longcallD reports phased genotypes, the phasing is valid only within local phase blocks and may not be consistent across genomic regions. Since Aardvark clusters variants based on genomic distance rather than phase-block boundaries, retaining these phased genotypes could introduce incorrect haplotype structure across clusters.
+We first convert VCFs from all 14 callers into sequence-resolved form. Because the merged callset integrates VCFs from assembly-based callers (dipcall and PAV) and a PacBio HiFi read-based caller (longcallD), we unphase longcallD genotypes prior to merging. Although longcallD reports phased genotypes, the phasing is valid only within local phase blocks and may not be consistent across genomic regions. Since Aardvark clusters variants based on genomic distance rather than phase-block boundaries, retaining these phased genotypes could introduce incorrect haplotype structure across clusters.
 
 This unphasing step does not affect `aardvark merge`, which evaluates haplotype sequences within each cluster. However, it is important when the resulting backbone callset is later treated as the truth callset for `aardvark compare`, where phased genotypes could otherwise impose incorrect haplotype constraints on query callsets.
 
 ### Backbone callset construction
 
-We used 14 variant callers in total. Among them, three callers generate joint callsets containing both small variants and SVs: two assembly-based callers (dipcall and PAV) and one HiFi-based caller (longcallD). These three callers form the backbone of the merged callsets, while all 14 callers are incorporated later as supporting evidence.
+We used 14 variant callers in total. Among them, three callers generate joint callsets containing both small variants and SVs: two assembly-based callers (dipcall and PAV) and one PacBio HiFi read-based caller (longcallD). These three callers form the backbone of the merged callsets, while all 14 callers are incorporated later as supporting evidence.
 
 In addition to producing joint callsets, these backbone callers provide base-level accurate variant representations. In contrast, many SV callers (e.g. SVIM-asm) merge similar heterozygous SVs into homozygous events, reducing base-level accuracy and complicating sequence-based comparisons.
 
